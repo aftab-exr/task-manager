@@ -27,9 +27,8 @@ const taskSchema = new Schema({
     }
 },{timestamps: true});
 
-taskSchema.pre("save", function(next){
-    if (!this.isModified("title")) return next();
-    next();
+taskSchema.pre("save", async function(){
+    if (!this.isModified("title")) return;
 })
 
 export const Task = mongoose.model("Task", taskSchema);
