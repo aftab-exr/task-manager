@@ -12,7 +12,7 @@ const verfiyJWT = asyncHandler(async (req, res, next) => {
         }
 
         // 2. Verify the token using your secret key
-        const decodedToken = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET);
+        const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
 
         // 3. Find the user in the database based on the _id inside the token
         const user = await User.findById(decodedToken?._id).select("-password");
