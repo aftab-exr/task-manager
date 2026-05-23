@@ -21,7 +21,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     // Create new user
     const newUser = await User.create({
-        username: username.lowercase(),
+        username: username.toLowerCase(),
         email,
         password,
         fullName
@@ -45,7 +45,7 @@ const loginUser = asyncHandler(async (req, res) => {
     }
     
     const existedUser = await User.findOne({
-        $or: [{username: username.lowercase()},{email}]
+        $or: [{username: username.toLowerCase()},{email}]
     })
 
     if (!existedUser) {
