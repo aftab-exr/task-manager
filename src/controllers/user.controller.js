@@ -66,9 +66,14 @@ const loginUser = asyncHandler(async (req, res) => {
         secure: true,
     }
 
+    const payload = {
+        user: loggedInUser,
+        token: token
+    }
+
     return res.status(200)
     .cookie("token", token, options)
-    .json( new apiResponse(200, "User logged in successfully", {user: loggedInUser, accesToken: token}) );
+    .json( new apiResponse(200, "User logged in successfully", payload) );
 })
 
 const logoutUser = asyncHandler(async (req, res) => {
