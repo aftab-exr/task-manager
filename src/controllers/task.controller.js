@@ -29,7 +29,7 @@ const createTask = asyncHandler(async (req, res) =>{
 })
 
 const getTasks = asyncHandler(async (req, res) => {
-    const myTasks = await Task.find({createdTask: req.user._id});
+    const myTasks = await Task.find({userId: req.user._id});
 
     return res.status(201)
     .json(

@@ -13,12 +13,12 @@ const taskSchema = new Schema({
     status: {
         type: String,
         enum: ["Pending", "In Progress", "Completed"],
-        default: ["Pending"]
+        default: "Pending"
     },
     priority: {
         type: String,
         enum: ["Low", "Medium", "High"],
-        default: ["Low"]
+        default: "Low"
     },
     userId: {
         type: mongoose.Schema.Types.ObjectId,
