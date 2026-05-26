@@ -92,7 +92,7 @@ const aiDecompile = asyncHandler(async (req, res) => {
 
     try {
         // 1. Send the brief to your Python Microservice
-        const aiResponse = await axios.post('https://moody-goats-float.loca.lt/api/v1/breakdown', {
+        const aiResponse = await axios.post('https://common-rats-add.loca.lt/api/v1/breakdown', {
             mission_brief
         },{
             headers: {
