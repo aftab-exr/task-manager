@@ -15,7 +15,7 @@ const createTask = asyncHandler(async (req, res) => {
     // --- THE AI TRIAGE INTERCEPT ---
     try {
         // Send the description through the tunnel to your local RAM
-        const triageResponse = await axios.post('https://silent-taxis-unite.loca.lt/api/v1/triage', {
+        const triageResponse = await axios.post('https://task-cmd-ai-service.onrender.com/api/v1/triage', {
             mission_brief: description
         }, {
             headers: { "Bypass-Tunnel-Reminder": "true" }
@@ -110,7 +110,7 @@ const aiDecompile = asyncHandler(async (req, res) => {
 
     try {
         // 1. Send the brief to your Python Microservice
-        const aiResponse = await axios.post('https://silent-taxis-unite.loca.lt/api/v1/breakdown', {
+        const aiResponse = await axios.post('https://task-cmd-ai-service.onrender.com/api/v1/breakdown', {
             mission_brief
         },{
             headers: {
