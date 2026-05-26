@@ -2,6 +2,8 @@ import { Task } from "../models/task.model.js";
 import { apiError } from "../utils/apiError.js";
 import { apiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
+import axios from "axios";
+
 
 const createTask = asyncHandler(async (req, res) =>{
     const {title, description, status, priority} = req.body;
@@ -81,9 +83,47 @@ const deleteTask = asyncHandler(async (req, res) => {
     )
 })
 
+const aiDecompile = asyncHandler(async (req, res) => {
+    const { mission_brief } = req.body;
+    
+    if (!mission_brief) {
+        throw new apiError(400, "MISSION_BRIEF required for AI fragmentation.");
+    }
+
+    try {
+        // 1. Send the brief to your Python Microservice
+        const aiResponse = await axios.post('http://127.0.0.1:8000/api/v1/breakdown', {
+            mission_brief
+        });
+
+        const subTasks = aiResponse.data.nodes; // The JSON array from Python
+
+        // 2. Map the array into MongoDB documents mapped to your schema
+        const tasksToCreate = subTasks.map(title => ({
+            title: title,
+            description: `Auto-fragmented from: ${mission_brief.substring(0, 50)}...`,
+            status: 'Pending',
+            priority: 'Medium',
+            userId: req.user._id // Binding to the active session user
+        }));
+
+        // 3. Bulk insert them into MongoDB Atlas
+        const createdTasks = await Task.insertMany(tasksToCreate);
+
+        return res.status(201).json(
+            new apiResponse(201, "AI Fragmentation Complete", createdTasks)
+        );
+
+    } catch (error) {
+        console.error("AI Bridge Error:", error.message);
+        throw new apiError(503, "Local AI Engine Offline or Unresponsive.");
+    }
+});
+
 export {
     createTask,
     getTasks,
     updateTask,
-    deleteTask
+    deleteTask,
+    aiDecompile
 }
