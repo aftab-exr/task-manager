@@ -92,7 +92,7 @@ const aiDecompile = asyncHandler(async (req, res) => {
 
     try {
         // 1. Send the brief to your Python Microservice
-        const aiResponse = await axios.post('http://127.0.0.1:8000/api/v1/breakdown', {
+        const aiResponse = await axios.post('https://task-manager-api-dkke.onrender.com/api/v1/breakdown', {
             mission_brief
         });
 

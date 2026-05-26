@@ -8,6 +8,6 @@ router.route("/create").post(verfiyJWT, createTask);
 router.route("/mytasks").get(verfiyJWT, getTasks);
 router.route("/:id/update").put(verfiyJWT,updateTask);
 router.route("/:id/delete").delete(verfiyJWT,deleteTask);
-router.route("/ai").post(verfiyJWT,aiDecompile);
+router.route("/breakdown").post(verfiyJWT,aiDecompile);
 
 export default router;
