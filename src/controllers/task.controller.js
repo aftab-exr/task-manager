@@ -92,8 +92,12 @@ const aiDecompile = asyncHandler(async (req, res) => {
 
     try {
         // 1. Send the brief to your Python Microservice
-        const aiResponse = await axios.post('https://quiet-lands-write.loca.lt/api/v1/breakdown', {
+        const aiResponse = await axios.post('https://young-shirts-pick.loca.lt/api/v1/breakdown', {
             mission_brief
+        },{
+            headers: {
+                "Bypass-Tunnel-Reminder": "true"
+            }
         });
 
         const subTasks = aiResponse.data.nodes; // The JSON array from Python
