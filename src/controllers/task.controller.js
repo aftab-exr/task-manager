@@ -4,31 +4,49 @@ import { apiResponse } from "../utils/apiResponse.js";
 import { asyncHandler } from "../utils/asyncHandler.js";
 import axios from "axios";
 
-
-const createTask = asyncHandler(async (req, res) =>{
-    const {title, description, status, priority} = req.body;
+const createTask = asyncHandler(async (req, res) => {
+    // Note: We changed 'const' to 'let' for priority so the AI can override it!
+    let { title, description, status, priority } = req.body; 
+    
     if (!(title && description && status && priority)) {
         throw new apiError(400, "All fields are required");
     }
+
+    // --- THE AI TRIAGE INTERCEPT ---
+    try {
+        // Send the description through the tunnel to your local RAM
+        const triageResponse = await axios.post('ttps://silent-taxis-unite.loca.lt/api/v1/triage', {
+            mission_brief: description
+        }, {
+            headers: { "Bypass-Tunnel-Reminder": "true" }
+        });
+
+        // If the AI detects a catastrophic bug, it forces the priority to High
+        if (triageResponse.data && triageResponse.data.priority === "High") {
+            console.log(`[AI_OVERRIDE]: Task "${title}" upgraded to HIGH priority.`);
+            priority = "High";
+        }
+    } catch (error) {
+        // If your laptop is offline, the server just ignores the AI and uses the user's input
+        console.error("AI Triage Offline, proceeding with standard priority.");
+    }
+    // -------------------------------
 
     const newTask = await Task.create({
         title,
         description,
         status,
-        priority,
+        priority, // This is now either the user's choice OR the AI's override
         userId: req.user._id
-    })
+    });
 
     const createdTask = await Task.findById(newTask._id);
     if (!createdTask) {
-        throw new apiError(500, "Something Went Wrong")
+        throw new apiError(500, "Something Went Wrong");
     }
 
-    return res.status(201)
-    .json( new apiResponse(201, "Task created successfully", createdTask) );
-
-
-})
+    return res.status(201).json(new apiResponse(201, "Task created successfully", createdTask));
+});
 
 const getTasks = asyncHandler(async (req, res) => {
     const myTasks = await Task.find({userId: req.user._id});
@@ -92,7 +110,7 @@ const aiDecompile = asyncHandler(async (req, res) => {
 
     try {
         // 1. Send the brief to your Python Microservice
-        const aiResponse = await axios.post('https://common-rats-add.loca.lt/api/v1/breakdown', {
+        const aiResponse = await axios.post('ttps://silent-taxis-unite.loca.lt/api/v1/breakdown', {
             mission_brief
         },{
             headers: {
